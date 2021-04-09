@@ -1,0 +1,13 @@
+docker network create mynetwork
+docker build -t jsnchzjmnz/postgres:latest .
+docker run -it -d --net mynetwork --rm --name mypostgres -p 5432:5432 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=mypassword  jsnchzjmnz/postgres:latest
+sudo docker logs mypostgres
+docker rm mypostgres
+psql -h localhost -p 5432 -U admin
+
+\l 
+\c myappdb
+select * from tabla;
+
+docker run --rm --net mynetwork --name myapp1 -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=mypassword -e POSTGRES_PORT=5432 -e POSTGRES_DB=myappdb -e POSTGRES_HOST=mypostgres -p 5000:5000 jsnchzjmnz/myapp:latest
+docker run -v ~/Documents/TEC/practica/ejercicios_docker_Kubernetes/nginx:/usr/share/nginx/html -d --name myweb -p 8080:8080 nginx
